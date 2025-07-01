@@ -1,0 +1,4 @@
+dotenv
+langchain
+langchain_openai
+langchain_huggingface 
