@@ -14,7 +14,6 @@ llm = HuggingFaceEndpoint(
 # define chat model
 chat_model = ChatHuggingFace(llm=llm, verbose=True)
 
-
 # define prompt template
 prompt_template = ChatPromptTemplate.from_messages([
     (
@@ -46,7 +45,6 @@ prompt_template = ChatPromptTemplate.from_messages([
         "Keep the structure and flow organized. Avoid overly complex vocabulary."
     )
 ])
-
 
 
 response = chat_model.invoke(prompt_template.invoke({
