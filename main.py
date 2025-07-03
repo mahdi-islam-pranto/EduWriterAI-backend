@@ -2,6 +2,8 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
+
 load_dotenv()
 
 # define hf llm 
@@ -47,13 +49,28 @@ prompt_template = ChatPromptTemplate.from_messages([
 ])
 
 
-response = chat_model.invoke(prompt_template.invoke({
+# base pydantic class
+class OutputSchema(BaseModel):
+    generated_content: str = Field(description="The generated content")
+    category: str = Field(description="The category of the generated content")
+    tone: str = Field(description="The tone of the generated content")
+    word_count: int = Field(description="The total word count of the generated content")
+
+# convert pydantic class to json schema
+output_json_schema = OutputSchema.model_json_schema()
+print(output_json_schema)
+
+
+response_with_structure = chat_model.with_structured_output(output_json_schema)
+
+
+AI_Response = response_with_structure.invoke(prompt_template.invoke({
     "length": "short",
     "tone": "academic",
-    "category": "Composition",
+    "category": "Essay",
     "subject": "English",
     "grade": "10",
-    "topic": "A School Library"
+    "topic": "Wonder of Modern Science"
 }))
-print(response.content)
+print(AI_Response)
 
