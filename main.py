@@ -10,7 +10,6 @@ load_dotenv()
 llm = HuggingFaceEndpoint(
     repo_id="deepseek-ai/DeepSeek-V3",  # or another small model
     task="text-generation",
-      
 )
 
 # define chat model
@@ -40,7 +39,7 @@ prompt_template = ChatPromptTemplate.from_messages([
     ),
     (
         "user",
-        "Create a {length} {tone} {category} in the subject of {subject} for a grade {grade} student.\n"
+        "Create a {length} {word_count} {tone} {category} in the subject of {subject} for a grade {grade} student.\n"
         "Topic: \"{topic}\"\n\n"
         "Make sure the content is appropriate for the student's level, engaging, and easy to understand. "
         "Use language suitable for {subject} learners in grade {grade}. "
@@ -49,7 +48,7 @@ prompt_template = ChatPromptTemplate.from_messages([
 ])
 
 
-# base pydantic class
+# base pydantic class for output
 class OutputSchema(BaseModel):
     generated_content: str = Field(description="The generated content")
     category: str = Field(description="The category of the generated content")
@@ -66,11 +65,11 @@ response_with_structure = chat_model.with_structured_output(output_json_schema)
 
 AI_Response = response_with_structure.invoke(prompt_template.invoke({
     "length": "short",
+    "word_count": "200",
     "tone": "academic",
-    "category": "Essay",
+    "category": "letter",
     "subject": "English",
     "grade": "10",
-    "topic": "Wonder of Modern Science"
+    "topic": "Importance of Modern Science"
 }))
 print(AI_Response)
-
